@@ -1,0 +1,54 @@
+name: ReviewRelay CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-and-build:
+    name: Lint, Test & Build
+    runs-on: ubuntu-latest
+
+    services:
+      redis:
+        image: redis:7.2-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Build shared package
+        run: npm run build --workspace=@reviewrelay/shared
+
+      - name: Typecheck backend
+        run: npm run typecheck --workspace=@reviewrelay/api
+
+      - name: Typecheck frontend
+        run: npm run typecheck --workspace=@reviewrelay/web
+
+      - name: Run Backend Unit & Integration Tests
+        run: npm run test --workspace=@reviewrelay/api
+
+      - name: Build Frontend Application
+        run: npm run build --workspace=@reviewrelay/web
+
+      - name: Build Backend Service
+        run: npm run build --workspace=@reviewrelay/api

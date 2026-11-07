@@ -1,0 +1,32 @@
+{
+  "name": "reviewrelay",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Engineering intelligence platform for GitHub pull request review workflows",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces",
+    "dev:api": "npm run dev --workspace=@reviewrelay/api",
+    "dev:web": "npm run dev --workspace=@reviewrelay/web",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspace=@reviewrelay/api",
+    "typecheck": "npm run typecheck --workspaces",
+    "simulate:pr": "node scripts/simulate-webhook.js pr-opened",
+    "simulate:stale": "node scripts/simulate-webhook.js pr-stale-2",
+    "simulate:fresh": "node scripts/simulate-webhook.js pr-fresh",
+    "simulate:requested": "node scripts/simulate-webhook.js review-requested",
+    "simulate:review": "node scripts/simulate-webhook.js review-submitted"
+  },
+  "keywords": [
+    "github",
+    "pull-requests",
+    "code-review",
+    "engineering-metrics",
+    "analytics"
+  ],
+  "author": "",
+  "license": "MIT"
+}
